@@ -57,8 +57,7 @@
 	<a href="views/directive">View Details</a>
 	
 	
-<br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br>
+
 <br><br><br><br><br><br><br><br><br>
 <br><br><br><br><br><br><br><br><br>
 </body>

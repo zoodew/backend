@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>개인 정보 입력</title>
+</head>
+<body>
+
+<!-- 230202 6교시 -->
+	<h2>개인 정보 입력</h2>
+	
+<!-- GET 방식 (URL에 노출)-->
+	
+	<!-- <form action="method.do" method="GET"> -->
+			<!-- 현재 해당 경로까지 동일. 페이지에 해당하는 부분만 변경 >> http://localhost:8088/01_Servlet/views/method.do -->
+	<!-- <form action="/01_Servlet/method.do" method="GET"> -->
+<!-- POST 방식 (URL에 노출 X)-->
+	<form action="/01_Servlet/method.do" method="POST">
+			<!-- http://localhost:8088/01_Servlet/method.do -->
+		<label for="userName">이름 : </label>
+		<input type="text" name="userName" id="userName"></input><br>
+		<label for="userAge">나이 : </label>
+		<input type="text" name="userAge" id="userAge"></input><br>
+		<label><input type="radio" name="gender" value="남자" checked></input>남자</label>
+		<label><input type="radio" name="gender" value="여자"></input>여자</label>
+	
+		<br><br>
+		
+		좋아하는 음식 :
+		<label><input type="checkbox" name="food" value="한식" checked></input>한식</label>	
+		<label><input type="checkbox" name="food" value="분식"></input>분식</label>	
+		<label><input type="checkbox" name="food" value="중식"></input>중식</label>	
+		<label><input type="checkbox" name="food" value="일식"></input>일식</label>	
+		
+		<br><br>
+		
+		<input type="submit" value="전송">
+		<input type="reset" value="취소">
+	</form>
+</body>
+</html>

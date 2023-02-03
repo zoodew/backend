@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 230202 -->
+<!-- 
+	배포 서술자(DD Deployment Descriptor)
+		- 배포 서술자는 웹 애플리케이션의 기본적인 설정을 위해 작성하는 파일이다.
+
+-->
+ 
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID" version="4.0">
+  <display-name>01_Servlet</display-name>
+  <!--
+  	클라이언트가 파일명을 생략하고 폴더까지만 지정해서 요청한다면
+  	웹서버는 해당 폴더에서 웰컴 파일을 찾아서 응답한다.
+  -->
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+  </welcome-file-list>
+  
+  <!--  서블릿 등록 -->
+  <servlet>
+  	<servlet-name>first</servlet-name>			<!-- 식별자 같은 기능 -->
+  	<servlet-class>com.kh.servlet.FirstServlet</servlet-class>
+  </servlet>
+  
+  <!-- 서블릿 매핑 -->
+  <!-- http://localhost:8088/01_Servlet/first.do -->
+  
+  <servlet-mapping>
+  	<servlet-name>first</servlet-name>
+  	<url-pattern>/first.do</url-pattern>
+  </servlet-mapping>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+</web-app>

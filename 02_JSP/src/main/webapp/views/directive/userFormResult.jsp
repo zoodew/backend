@@ -2,9 +2,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
+    
+    
 <!-- 230203 6교시 02_JSP 폼 파라미터 값 읽어오기 /directive index.jsp의 폼태그에 입력된 값-->
+<!-- 230206 1교시 폼 파라미터 값을 읽어오기 전에 인코딩 설정을 해야 directive/index의 method가 POST방식이어도 한글이 다 출력된다. -->
 <%
-	// 폼 파라미터 값 읽어오기
+
+	// 인코딩 설정 230206 1교시
+	request.setCharacterEncoding("UTF-8");
+	// 폼 파라미터 값 읽어오기		230203 6교시
 	// r 폼 파라미터 배열 생성은 String 타입으로만 값을 받음
 	String userName = request.getParameter("userName");
 	String userAge = request.getParameter("userAge");

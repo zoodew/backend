@@ -57,6 +57,56 @@
 	<a href="views/directive">View Details</a>
 	
 	
+<!-- 230206 1교시 kh-study-cloud/backend 02_JSP 5.JSP 내장 객체 -->
+	<h2>4. JSP 내장 객체</h2>
+	<p>
+		JSP 파일이 자바 코드로 생성될 때 자동으로 추가되는 객체들을 내장 객체라도 한다. <br>
+		즉, JSP 파일 내부에서 개발자가 직접 선언하지 않아도 바로 사용이 가능한 객체를 내장 객체라 한다.
+	</p>
+	<ol>
+		<li>request</li>
+		<li>response</li>
+		<li>out</li>
+		<li>session</li>
+		<li>application</li>
+		<li>page</li>
+		<li>pageContext</li>
+		<li>exception</li>
+	</ol>
+
+<!-- 230206 4교시 kh-study-cloud/backend 02_JSP session webapp/views/objects/index.jsp -->
+	
+	<%= session.getAttribute("userId") %> <br>
+	<!-- url 주소 복사 후 새 창 켜서 그 주소 붙여서 이동하면 값이 null로 나옴 -->
+	
+
+	<a href="views/objects">View Details</a>
+
+
+<!-- 230206 1교시 kh-study-cloud/backend 02_JSP 6.JSP 내장 객체 영역-->
+	
+	<h2>5. 영역 객체</h2>
+	<p>
+		JSP에서 제공하는 내장 객체들 중에 pageContext, request, session, application 객체는 해당 객체에 정의된 유효한 범위를 갖는다. <br>
+		해당 객체들은 유효한 범위 안에서 필요한 데이터를 서로 공유할 수 있고, 이 공유되는 데이터를 속성(Attribte)이라 한다.
+	</p>
+	
+	<ol>
+		<li>Page 영역</li>
+		<li>Request 영역</li>
+		<li>Session 영억</li>
+		<li>Application 영억</li>
+	</ol>
+
+	<a href="views/scope">View Details</a>
+
+
+
+
+
+
+	
+	
 
 <br><br><br><br><br><br><br><br><br>
 <br><br><br><br><br><br><br><br><br>

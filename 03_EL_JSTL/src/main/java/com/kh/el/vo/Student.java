@@ -2,8 +2,10 @@ package com.kh.el.vo;
 
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 
 // 롬복 사용 어노테이션
@@ -12,6 +14,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
+@EqualsAndHashCode
 
 //@Data					// 모든 거 다 만들기
 //@AllArgsConstructor	// 모든 필드를 매개변수로 갖는 생성자를 만들거야

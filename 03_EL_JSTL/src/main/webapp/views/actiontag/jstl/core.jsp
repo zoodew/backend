@@ -7,6 +7,7 @@
 <!-- 230207 6교시 kh-study-cloud/backend 03_EL_JSTL JSTL Core Tags -->
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!-- 
+	태그라이브러리 지시자 선언
 	uri		: 코어태그라이브러리를 사용한다고 식별자처럼 적어주는 것 구분자라고 생각하기
 	prefix	: 코어태그라이브러리에서 주는 태그라이브러리 사용할 때 접두어 뭘로 쓸지 지정
 -->
@@ -243,19 +244,38 @@
 	
 	
 	
+<!-- 230208 1교시 kh-study-cloud/backend 03_EL_JSTL JSTL Core Tags -->
+
+	<h3>2) c:forTokens 태그</h3>
+	<p>
+		문자열에 포함된 구분자를 통해 토큰을 분리해 반복을 수행하는 태그이다.
+	</p>	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	<ul>		<!-- var 속성에 변수명. 받아온 items를 var변수에 넣어줌 delims : 구분자. 구분자는 여러 개 넣을 수 있음. 여기서는 공백, 콤마(,), 슬래시(/) -->
+		<c:forTokens var="color" items="pink red tomato,lime/yellowgreen aqua" delims=" ,/">
+			<li style="color:${ color }">${ color }</li>
+		</c:forTokens>
+	</ul>
+
+
+	<h3>2) c:url 태그</h3>
+	<p>
+		URL을 생성하고 쿼리 스트링을 미리 설정하는 태그이다. <br>
 		
+		URL을 미리 만들어 놓고 필요한 곳에서 EL 태그로 접근할 수 있게 만들어 놓은 태그
+	</p>
+			<!-- var 변수에 value를 값으로 넣음 -->
+	<c:url var="url" value="/views/el/elParam.jsp">	<!-- '/' = webapp 뜻함 -->
+		<c:param name="pName" value="아이폰 12 미니"/>		<!-- 쿼리스트링. URL에 값이 뜨고(GET 방식) 출력이 됨 -->
+		<c:param name="pCount" value="2"/>
+		<c:param name="option" value="화이트"/>
+		<c:param name="option" value="128GB"/>
+	</c:url>			
+			<!-- r 개발자도구에서 요소를 확인하면 /03_EL_JSTL/views/el/elParam.jsp로 나온다. -->
+	<a href="${ url }">이동</a>
 	
-	
+
+
 	
 </body>		
 </html>

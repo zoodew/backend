@@ -93,6 +93,25 @@
 	
 
 
+<!-- 230208 2,3교시 kh-study-cloud/backend 03_EL_JSTL JSTL Formatting Tags -->
+	
+	<h4>2-2) JSTL Formatting Library</h4>
+	<p>
+		날짜, 시간, 숫자 데이터의 출력 형식을 지정할 때 사용하는 액션 태그를 제공한다.
+	</p>
+			<!-- 7행의 contextPath 변수를 통해 EL에 접근해 얻어올 수 있다. -->
+	<a href="${ contextPath }/views/actiontag/jstl/formatting.jsp">JSTL Formatting</a>
+
+
+
+<!-- 230208 3교시 kh-study-cloud/backend 03_EL_JSTL JSTL Function -->
+
+	<h4>2-3) JSTL Function Library</h4>
+	<p>
+		문자열 처리에 관한 메소드들을 EL 구문에서 사용할 수 있게 하는 라이브러리이다.
+	</p>
+	
+	<a href="${ contextPath }/views/actiontag/jstl/function.jsp">JSTL Function</a>
 
 
 </body>

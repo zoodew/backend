@@ -8,6 +8,10 @@
 <title>Insert title here</title>
 </head>
 <body>
+
+<!-- 얼럿창 띄우는 거 자주 사용함. 그걸 따로 jsp로 빼내서 그때그때 사용하기 편리하게 만듦 -->
+
+
 	<script>
 		// 알림메세지를 띄움
 		alert("${ msg }");

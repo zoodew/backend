@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Member {
 	
+	// DB에 있는 컬럼들 필드로 생성
+	
 	private int no;
 	
 	private String id;

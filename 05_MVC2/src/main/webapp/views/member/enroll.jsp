@@ -29,10 +29,12 @@
 	}
 </style>
 
+										<!-- 230210 4교시 회원가입 기능 구현 -->
+
 <section id="content">
 	<h2 align="center">회원 가입 정보</h2>
 	<div id="enroll-container">	 	
-	 	<form name="memberEnrollFrm" action="" method="post">
+	 	<form name="memberEnrollFrm" action="${ path }/member/enroll" method="post">
 	 		<table>
 	 			<tr>
 					<th>아이디</th>

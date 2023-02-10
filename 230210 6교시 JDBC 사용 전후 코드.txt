@@ -1,0 +1,300 @@
+package com.kh.mvc.member.model.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import com.kh.mvc.member.model.vo.Member;
+
+		// 230210 6교시 JDBC 사용 전 코드 JDBC로 삭제되는 행이 많아서 이전 복습 어려워서 남김 이전 복습은 이거 토대로 하기
+
+public class MemberDao {
+
+   public Member findMemberById(Connection connection, String userId) {
+      Member member = null;
+      Connection connection = null;
+//      Statement statement = null;
+      PreparedStatement preparedStatement = null;
+      ResultSet resultSet = null;               // 사용자가 입력한 아이디(ex admin2)로 조회할 수 있게 만든 쿼리문
+      //쿼리문 생성 statement용
+      //String query = "SELECT * FROM MEMBER WHERE ID='" + userId + "' AND STATUS='Y'";
+      //쿼리문 생성 preparedStatement용
+      String query = "SELECT * FROM MEMBER WHERE ID=? AND STATUS='Y'";
+      
+      try {
+//         Class.forName() 다운로드 받은 드라이버 등록해주는 역할
+//         DriveManager에 해당 DBMS Driver 등록
+         Class.forName("oracle.jdbc.driver.OracleDriver");
+
+//         getConnection() = 해당 Driver로부터 Connection instance(객체) 얻어오기         
+         connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "WEB", "WEB");
+
+//         createStatement() = Connection instance를 통해 Statement instance 획득
+//         statement = connection.createStatement();
+         preparedStatement = connection.prepareStatement(query);
+         
+         preparedStatement.setString(1, userId);
+            // 인자를 지정해 둘 수 있어서 statement()보다 가독성이 좋아짐
+         
+//         executeQuery() = SELECT구문을 실행시키는 메소드
+         // executeQuery() : 생성한 쿼리문(query)을 매개값으로 넘겨주고 있음
+//         resultSet = statement.executeQuery(query);
+         resultSet = preparedStatement.executeQuery();
+                  // 쿼리 매개값 전달 안 함
+         
+               // resultSet() : 쿼리문의 실행 결과가 담겨있음
+         while(resultSet.next()) {      // 매개값으로 컬럼명 가져와도 되고 컬럼순번을 가져와도 됨.
+                     // next() 조회된 데이터가 있는지 확인하는 메소드 true false 값 나옴
+            member = new Member();
+            
+            member.setNo(resultSet.getInt("NO"));
+            member.setId(resultSet.getString("ID"));
+            member.setPassword(resultSet.getString("PASSWORD"));
+            member.setRole(resultSet.getString("ROLE"));
+            member.setName(resultSet.getString("NAME"));
+            member.setPhone(resultSet.getString("PHONE"));
+            member.setEmail(resultSet.getString("EMAIL"));
+            member.setAddress(resultSet.getString("ADDRESS"));
+            member.setHobby(resultSet.getString("HOBBY"));
+            member.setStatus(resultSet.getString("STATUS"));
+            member.setEnrollDate(resultSet.getDate("ENROLL_DATE"));
+            member.setModifyDate(resultSet.getDate("MODIFY_DATE"));
+            
+                                    // get~() : 컬럼명, 컬럼순번 둘 다 매개값으로 받을 수 있음. 그 컬럼에 속하는 데이터 조회
+            System.out.println(resultSet.getInt("NO"));
+            System.out.println(resultSet.getString("ID"));
+            System.out.println(resultSet.getString(3));
+            System.out.println(resultSet.getString(4));
+         }
+         
+      } catch (ClassNotFoundException e) {
+         e.printStackTrace();
+      } catch (SQLException e) {
+         e.printStackTrace();
+      } finally {
+         //클로즈 순서는 생성의 역순으로
+         try {
+            resultSet.close();
+//            statement.close();
+            preparedStatement.close();
+            connection.close();
+         } catch (SQLException e) {
+            e.printStackTrace();
+         }
+      }
+      
+      return member;
+   }
+
+   
+// 230210 4교시 회원가입 기능 구현
+
+   public int insertMember(Member member) {
+
+      Connection connection = null;
+      PreparedStatement pstmt = null;
+      String query = "INSERT INTO MEMBER VALUES(SEQ_UNO.NEXTVAL,?,?,DEFAULT,?,?,?,?,?,DEFAULT,DEFAULT,DEFAULT)";
+      
+      int result = 0;
+      // 밑에 코드 작성 전에 클래스 생성 후 서버 작동시켜서 console창에 0이 뜨는지 확인하기 연결됐나 확인코스
+      
+      try {
+         Class.forName("oracle.jdbc.driver.OracleDriver");
+         
+         connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "WEB", "WEB");
+         
+         connection.setAutoCommit(false);
+               // setAutoCommit() : 인서트 업데이트 딜리트 작업 했을 때 자동으로 커밋되게 하는 메소드. false는 자동 커밋 X
+         
+         // 쿼리문 실행시킬 statement 가져오기
+         pstmt = connection.prepareStatement(query);
+         
+         // 쿼리문 실행 전 query문의 ?들에 값 넣어주기
+         pstmt.setString(1, member.getId());
+         pstmt.setString(2, member.getPassword());
+         pstmt.setString(3, member.getName());
+         pstmt.setString(4, member.getPhone());
+         pstmt.setString(5, member.getEmail());
+         pstmt.setString(6, member.getAddress());
+         pstmt.setString(7, member.getHobby());
+         
+
+// 230210 5교시 회원가입 기능 구현
+         
+         // 쿼리문 실행
+         result = pstmt.executeUpdate();
+            // 쿼리문을 insert update delete로 받아오면 executeUpdate를 사용함.
+
+            
+            // result 쿼리문 실행해서 나온 행의 개수
+         if( result > 0 ) {   // 행의 개수가 0보다 크면
+            connection.commit();   // 커밋
+         } else {         // 그게 아니라면
+            connection.rollback();   // 롤백
+         }
+         
+      } catch (ClassNotFoundException e) {
+         e.printStackTrace();
+      } catch (SQLException e) {
+         e.printStackTrace();
+      } finally {
+         // close는 예외가 있든 없든 무조건 해줘야해서 filnally에 적어둠
+         try {
+            pstmt.close();            // close()는 생성 반대순으로
+            connection.close();
+         } catch (SQLException e) {
+            e.printStackTrace();
+         }
+         
+      }
+      
+      return result;
+      
+   }
+   
+   /*
+    * 서버 돌리고 회원가입폼 입력하고 가입시켜서 DB 켜서 제대로 들어있나 확인, 작성한 아이디 비번으로 로그인 가능한지도 봐보기
+    * 하고 DB에서 행 삭제 후(커밋 드럼통 초록모양 F11)까지 해주기
+    * 
+    * 서버 돌리고 회원가입폼 입력 후 가입했을 때
+    * 
+    * java.sql.SQLIntegrityConstraintViolationException: ORA-00001: unique constraint (WEB.SYS_C007287) violated
+    * 이런 오류가 나면 인서트 된 값 또 똑같이 넣으려고 해서 나는 것.
+    * 
+    * unique constraint 유니크 제약조건은 똑같은 값 못들어 가는데 같은 값을 또 입력하려해서
+    * DB에 이미 똑같은 값이 들어가 있는지 확인해보기
+    */
+}
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+					/*위 230210 6교시 이전 복습용 | 코드 아래 230220 6교시 복습용 코드*/
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+package com.kh.mvc.member.model.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+//230210 6교시 JDBC 템플릿을 사용해 간결하게 만들기
+// 그 전까지 복습 카톡에 230210 6교시 JDBC 사용 전 코드 검색해 그걸로 하기
+
+// close메소드를 JDBCTemplate없이도 사용하고 싶어서 만든 식
+import static com.kh.mvc.common.jdbc.JDBCTemplate.close;
+import com.kh.mvc.member.model.vo.Member;
+
+
+// 230210 6교시 JDBC 템플릿을 사용해 간결하게 만들기
+public class MemberDao {
+
+	public Member findMemberById(Connection connection, String userId) {
+		Member member = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;					// 사용자가 입력한 아이디(ex admin2)로 조회할 수 있게 만든 쿼리문
+		//쿼리문 생성 statement용
+		//String query = "SELECT * FROM MEMBER WHERE ID='" + userId + "' AND STATUS='Y'";
+		//쿼리문 생성 preparedStatement용
+		String query = "SELECT * FROM MEMBER WHERE ID=? AND STATUS='Y'";
+		
+		try {
+
+			pstmt = connection.prepareStatement(query);
+			
+			pstmt.setString(1, userId);
+			
+			rs = pstmt.executeQuery();
+
+			while(rs.next()) {
+
+				member = new Member();
+				
+				member.setNo(rs.getInt("NO"));
+				member.setId(rs.getString("ID"));
+				member.setPassword(rs.getString("PASSWORD"));
+				member.setRole(rs.getString("ROLE"));
+				member.setName(rs.getString("NAME"));
+				member.setPhone(rs.getString("PHONE"));
+				member.setEmail(rs.getString("EMAIL"));
+				member.setAddress(rs.getString("ADDRESS"));
+				member.setHobby(rs.getString("HOBBY"));
+				member.setStatus(rs.getString("STATUS"));
+				member.setEnrollDate(rs.getDate("ENROLL_DATE"));
+				member.setModifyDate(rs.getDate("MODIFY_DATE"));
+				
+			}			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// JDBC템플릿으로 클로즈
+			close(rs);
+			close(pstmt);
+		}
+		
+		return member;
+	}
+
+	
+// 230210 4교시 회원가입 기능 구현
+
+	public int insertMember(Connection connection, Member member) {
+
+		int result = 0;
+		
+		PreparedStatement pstmt = null;
+		String query = "INSERT INTO MEMBER VALUES(SEQ_UNO.NEXTVAL,?,?,DEFAULT,?,?,?,?,?,DEFAULT,DEFAULT,DEFAULT)";
+		
+		// 밑에 코드 작성 전에 클래스 생성 후 서버 작동시켜서 console창에 0이 뜨는지 확인하기 연결됐나 확인코스
+		
+		try {
+			pstmt = connection.prepareStatement(query);
+			
+			// 쿼리문 실행 전 query문의 ?들에 값 넣어주기
+			pstmt.setString(1, member.getId());
+			pstmt.setString(2, member.getPassword());
+			pstmt.setString(3, member.getName());
+			pstmt.setString(4, member.getPhone());
+			pstmt.setString(5, member.getEmail());
+			pstmt.setString(6, member.getAddress());
+			pstmt.setString(7, member.getHobby());
+			
+
+			result = pstmt.executeUpdate();
+
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(pstmt);
+		}
+		
+		return result;
+		
+	}
+	
+	/*
+	 * 서버 돌리고 회원가입폼 입력하고 가입시켜서 DB 켜서 제대로 들어있나 확인, 작성한 아이디 비번으로 로그인 가능한지도 봐보기
+	 * 하고 DB에서 행 삭제 후(커밋 드럼통 초록모양 F11)까지 해주기
+	 * 
+	 * 서버 돌리고 회원가입폼 입력 후 가입했을 때
+	 * 
+	 * java.sql.SQLIntegrityConstraintViolationException: ORA-00001: unique constraint (WEB.SYS_C007287) violated
+	 * 이런 오류가 나면 인서트 된 값 또 똑같이 넣으려고 해서 나는 것.
+	 * 
+	 * unique constraint 유니크 제약조건은 똑같은 값 못들어 가는데 같은 값을 또 입력하려해서
+	 * DB에 이미 똑같은 값이 들어가 있는지 확인해보기
+	 */
+}

@@ -93,10 +93,64 @@
 	 		<input type="submit" id="enrollSubmit" value="가입">	
 	 		<input type="reset" value="취소">	
 	 	</form>
-	 	<form name="checkIdForm">
-	 		<input type="hidden" name="userId">
-	 	</form>
  	</div>
 </section>
+
+<script>
+
+/* 230213 1교시 취미 체크박스 선택 안 하고 가입시 null point exception 뜨는 것 해결 */
+	
+	// 아이디 중복 확인
+	$(document).ready(() => {
+		$('#checkDuplicate').on('click', () => {
+			let userId = $('#newId').val().trim();
+				// newId가 아이디인 요소를 가져와 val()로 newId의 값을 가져오고 trim()으로 공백 제거
+				
+			// ajax 요청
+			$.ajax({
+				type: 'POST',
+				url: '${ path }/member/idCheck',
+				dataType: 'json',
+				data: {
+					userId
+				},
+				success: (obj) => {	// json (230213 2교시에서 gson으로 Object객체로 바꿔서 data에서 obj로 변경)
+					console.log(obj);
+				
+					if(obj.duplicate) {
+						alert("이미 사용중인 아이디 입니다.");
+					} else {
+						alert("사용 가능한 아이디 입니다.");
+					}
+				},
+				error: (error) => {
+					console.log(error);
+				}	
+			});
+		});
+		
+		
+		
+	});
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <jsp:include page="/views/common/footer.jsp" /> 

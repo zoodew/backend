@@ -15,7 +15,7 @@
 	<header>
 		<h1>Hello MVC</h1>
 		
-		${ empty loginMember } <br>
+		<%-- ${ empty loginMember } <br> --%>
 		<!-- 영역객체 안에 loginMember가 있는 지 확인
 			true > null. 로그인 안 됐을 때. false 로그인 됐을 때.
 			
@@ -71,7 +71,8 @@
 					</tr>
 					<tr>
 						<td>
-							<button>내 정보</button>
+<!-- 230213 2교시 내 정보 버튼 클릭하면 사용자 정보 보이게 -->
+							<button onclick="location.href='${ path }/member/myPage'">내 정보</button>
 						</td>
 						<td>
 							<button onclick="location.replace('${ path }/logout')">로그아웃</button>
@@ -87,7 +88,8 @@
 		<nav>
 			<ul class="main-nav">
 				<li class="home"><a href="${ path }/">Home</a></li>
-				<li id="board"><a href="${ path }/">게시판</a></li>
+<!-- 230213 7교시 게시판 구현 -->
+				<li id="board"><a href="${ path }/board/list">게시판</a></li>
 				<li id="admin-member"><a href="${ path }/">회원관리</a></li>
 			</ul>
 		</nav>

@@ -24,7 +24,7 @@
 </head>
 <body>
 	<div id="updatePassword-container">
-		<form action="${ path }/member/updatePwd" method="post">
+		<form action="${ path }/member/updatePwd" method="POST">
 			<table>
 				<tr>
 					<th>변경할 비밀번호</th>
@@ -43,6 +43,7 @@
 						<input type="submit" value="변경" onclick="return validate();">
 						&nbsp;
 						<input type="button" value="닫기" onclick="self.close();">
+															<!-- self.close() 창 닫기 -->
 					</td>
 				</tr>
 			</table>

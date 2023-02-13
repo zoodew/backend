@@ -17,8 +17,8 @@ import com.kh.mvc.common.wrappaer.EncryptPasswordWrapper;
 
 
 //@WebFilter(filterName = "encrypt", urlPatterns = {"/login", "/member/enroll"})	// 필터명 지정 encrypt, 경로 지정
-@WebFilter(filterName = "encrypt", servletNames =  {"login", "enroll"})	// 필터명 지정 encrypt, 경로지정 서블릿명으로 지정
-public class EncryptFilter implements Filter {
+@WebFilter(filterName = "encrypt", servletNames =  {"login", "enroll", "updatePwd"})	// 필터명 지정 encrypt, 경로지정 서블릿명으로 지정
+public class EncryptFilter implements Filter {						//	ㄴ 230213 5교시 회원번호 수정 비밀번호 변경하기 암호화필터적용 "updatePwd" 추가
        
 
     public EncryptFilter() {

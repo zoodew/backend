@@ -21,14 +21,15 @@ public class EnrollServlet extends HttpServlet {
     public EnrollServlet() {
     }
 
-
     // 겟으로는 회원가입 페이지 포워드
+    @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// 회원가입 페이지로 포워드 하는 기능	
 		request.getRequestDispatcher("/views/member/enroll.jsp").forward(request, response);
 	}
 
 	// 포스트로는 받은 회원가입정보를 db에 저장하고 보냄
+    @Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 // 230210 7교시 서블릿 필터 기능 실습 위해 주석
 //		request.setCharacterEncoding("UTF-8");
@@ -42,9 +43,17 @@ public class EnrollServlet extends HttpServlet {
 		member.setPhone(request.getParameter("phone"));
 		member.setEmail(request.getParameter("email"));
 		member.setAddress(request.getParameter("address"));
-		member.setHobby(String.join(",", request.getParameterValues("hobby")));
+		
+// 230213 1교시 취미 체크박스 선택 안 하고 가입시 null point exception 뜨는 것 해결 밑에 행부터 8 개 행.
+//								바로 밑 행만 주석 풀어 놓고 나머지 주석으로 묶으면 체크박스 필수로 선택해야 함
+		//member.setHobby(String.join(",", request.getParameterValues("hobby")));
 						//.join("구분자", 배열) 배열의 문자열을 구분자로 구분해서 하나의 문자열로 생성
 						// setHobby()가 String으로 매개값을 받아서 .join()메소드 사용해서 하나의 문자열로 생성해줌
+		
+		String hobby = request.getParameterValues("hobby") != null?
+				String.join(",", request.getParameterValues("hobby")) : null;
+		
+		member.setHobby(hobby);
 		
 		System.out.println(member);
 		

@@ -73,6 +73,7 @@ public class MemberDao {
 		
 		PreparedStatement pstmt = null;
 		String query = "INSERT INTO MEMBER VALUES(SEQ_UNO.NEXTVAL,?,?,DEFAULT,?,?,?,?,?,DEFAULT,DEFAULT,DEFAULT)";
+						// kh-study-cloud/backend/TableScripts.sql에서 복사해오기
 		
 		// 밑에 코드 작성 전에 클래스 생성 후 서버 작동시켜서 console창에 0이 뜨는지 확인하기 연결됐나 확인코스
 		
@@ -100,6 +101,94 @@ public class MemberDao {
 		
 		return result;
 		
+	}
+
+	
+// 230213 3,4교시 회원정보 수정하기
+	public int updateMember(Connection connection, Member member) {
+
+		int result = 0;
+		PreparedStatement pstmt = null;
+		
+		String query = "UPDATE MEMBER SET NAME=?,PHONE=?,EMAIL=?,ADDRESS=?,HOBBY=?,MODIFY_DATE=SYSDATE WHERE NO=?";
+						// kh-study-cloud/backend/TableScripts.sql에서 복사해오기
+		try {
+			pstmt = connection.prepareStatement(query);
+			
+			// prepareStatement를 통해 물음표에 값 세팅
+			pstmt.setString(1, member.getName());
+			pstmt.setString(2, member.getPhone());
+			pstmt.setString(3, member.getEmail());
+			pstmt.setString(4, member.getAddress());
+			pstmt.setString(5, member.getHobby());
+			pstmt.setInt(6, member.getNo());
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(pstmt);
+		}
+
+		
+		return result;
+	}
+
+
+// 230213 5교시 6교시 비번변경
+	public int updateMemberPassword(Connection connection, int no, String userPwd) {
+		
+		int result = 0;
+		PreparedStatement pstmt = null;
+		
+		String query = "UPDATE MEMBER SET PASSWORD=? WHERE NO=?";
+						// kh-study-cloud/backend/TableScripts.sql에서 복사해오기
+		
+		try {
+			pstmt = connection.prepareStatement(query);
+			
+			pstmt.setString(1, userPwd);
+			pstmt.setInt(2, no);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(pstmt);
+		}
+		
+		return result;
+	}
+
+	
+// 230213 5교시 6교시 탈퇴
+	public int updateMemberStatus(Connection connection, int no, String status) {
+		
+		int result = 0;
+		PreparedStatement pstmt = null;
+		
+		String query = "UPDATE MEMBER SET STATUS=? WHERE NO=?";
+						// kh-study-cloud/backend/TableScripts.sql에서 복사해오기
+		
+		try {
+			pstmt = connection.prepareStatement(query);
+			
+			pstmt.setString(1, status);
+			pstmt.setInt(2, no);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(pstmt);
+		}
+		
+		return result;
+		
+		// 탈퇴를 하면 DB에 데이터는 남아있으나 STATUS의 상태가 Y에서 N으로 변경됨
 	}
 	
 	/*

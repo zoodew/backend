@@ -31,36 +31,50 @@
 		<table id="tbl-board">
 			<tr>
 				<th>글번호</th>
-				<td></td>
+<!-- 230214 3교시 상세 게시글 화면에 그려주기 -->
+				<td>${ board.no }</td>
 			</tr>
 			<tr>
 				<th>제 목</th>
-				<td></td>
+				<td>${ board.title }</td>
 			</tr>
 			<tr>
 				<th>작성자</th>
-				<td></td>
+				<td>${ board.writerId }</td>
 			</tr>
 			<tr>
 				<th>조회수</th>
-				<td></td>
+				<td>${ board.readCount }</td>
 			</tr>
 			<tr>
+<!-- 230214 6교시 게시글 내에서 첨부파일 이름 보이게 만들기 -->
 				<th>첨부파일</th>
 				<td>
-					<span style="color: gray;"> - </span>
+					<c:if test="${ empty board.originalFileName }">
+						<span> - </span>
+					</c:if>
+					<c:if test="${ not empty board.originalFileName }">
+						<span> ${ board.originalFileName }</span>
+					</c:if>
 				</td>
 			</tr>
 			<tr>
 				<th>내 용</th>
-				<td></td>
+				<td>${ board.content }</td>
 			</tr>
 			<%--글작성자/관리자인경우 수정삭제 가능 --%>
 			<tr>
 				<th colspan="2">
-					<button type="button">수정</button>
-					<button type="button">삭제</button>
-					<button type="button">목록으로</button>
+<!-- 230214 3교시 수정 삭제 로그인 한 작성자만 보이게 하기 -->
+					<c:if test="${ not empty loginMember && loginMember.id == board.writerId }">
+<!-- 230214 6교시 게시글 내 수정 버튼 누르면 수정 페이지로 이동 -->
+						<button type="button" onclick="location.href='${ path }/board/update?no=${ board.no }'">수정</button>
+						<button type="button">삭제</button>
+					</c:if>
+<!-- 230214 4교시 상세 게시물에서 목록으로 가게 만들기 -->
+					<button type="button" onclick="location.href='javascript:history.back()'">목록으로</button>
+										<!-- onclick="location.href='${ path }/board/list'" 상세 게시물에서 1페이지 목록으로 보내는 코드 -->
+										<!-- onclick="location.href='javascript:history.back()'" 상세 게시물에서 현재 게시물이 있는 목록으로 보내는 코드 javascript: 생략 가능 -->		
 				</th>
 			</tr>
 		</table>

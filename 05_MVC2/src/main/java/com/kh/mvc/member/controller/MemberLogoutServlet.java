@@ -11,11 +11,11 @@ import javax.servlet.http.HttpSession;
 // 230210 3교시 로그아웃 기능 구현 서블릿
 
 @WebServlet(name = "logout", urlPatterns = { "/logout" })
-public class LogoutServlet extends HttpServlet {
+public class MemberLogoutServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 
-    public LogoutServlet() {
+    public MemberLogoutServlet() {
     }
 
     @Override

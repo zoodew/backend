@@ -12,11 +12,11 @@ import com.kh.mvc.member.model.service.MemberService;
 import com.kh.mvc.member.model.vo.Member;
 
 @WebServlet(name = "updatePwd", urlPatterns = { "/member/updatePwd" })
-public class UpdatePasswordServlet extends HttpServlet {
+public class MemberUpdatePasswordServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 
-    public UpdatePasswordServlet() {
+    public MemberUpdatePasswordServlet() {
 }
 
     @Override

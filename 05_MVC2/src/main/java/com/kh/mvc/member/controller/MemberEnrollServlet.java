@@ -14,11 +14,11 @@ import com.kh.mvc.member.model.vo.Member;
 
 
 @WebServlet(name = "enroll", urlPatterns = { "/member/enroll" })
-public class EnrollServlet extends HttpServlet {
+public class MemberEnrollServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 
-    public EnrollServlet() {
+    public MemberEnrollServlet() {
     }
 
     // 겟으로는 회원가입 페이지 포워드

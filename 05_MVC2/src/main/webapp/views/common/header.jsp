@@ -90,6 +90,7 @@
 				<li class="home"><a href="${ path }/">Home</a></li>
 <!-- 230213 7교시 게시판 구현 -->
 				<li id="board"><a href="${ path }/board/list">게시판</a></li>
+<!-- 230216 7교시 관리자만 회원관리 카테고리 보이게 -->
 				<li id="admin-member"><a href="${ path }/">회원관리</a></li>
 			</ul>
 		</nav>

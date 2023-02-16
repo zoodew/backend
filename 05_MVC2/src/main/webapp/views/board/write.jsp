@@ -59,7 +59,7 @@
 				</tr>
 				<tr>
 					<th>작성자</th>
-<!-- 230214 4교시 글 작성할 때 첨부파일 넣으면 서버로 전달 -->
+<!-- 230214 4교시 첨부파일 다운로드하기 글 작성할 때 첨부파일 넣으면 서버로 전달 -->
 					<td><input type="text" name="writer" value="${ loginMember.id }" readonly></td>
 				</tr>
 				<tr>

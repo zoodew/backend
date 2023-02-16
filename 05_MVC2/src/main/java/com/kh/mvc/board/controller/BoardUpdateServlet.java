@@ -1,5 +1,6 @@
 package com.kh.mvc.board.controller;
 
+import java.io.File;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -36,8 +37,9 @@ public class BoardUpdateServlet extends HttpServlet {
 		Member loginMember = (session == null) ? null : (Member) session.getAttribute("loginMember");
     	
 		if (loginMember != null) {	// 로그인 상태
-			
-			Board board = new BoardService().getBoardByNo(no);		//  게시글을 작성한 회원이 맞는지 체크 안쪽 if else 까지
+
+// 230216 8교시 한 번 조회한 회원은 조회수 처리에 포함되지 않게 만들기 > getBoardByNo()를 ,true 포함시켜 수정. true는 이미 조회한 이력이 있는 상태
+			Board board = new BoardService().getBoardByNo(no, true);		//  게시글을 작성한 회원이 맞는지 체크 안쪽 if else 까지
 						
 			if(board != null && loginMember.getId().equals(board.getWriterId())) {
 				request.setAttribute("board", board);
@@ -87,15 +89,41 @@ public class BoardUpdateServlet extends HttpServlet {
 	    	MultipartRequest mr = new MultipartRequest(request, path, maxSize, encoding, new FileRename());
 	    		// MultipartRequest(리퀘스트객체, 파일저장경로, 파일최대사이즈, 파일 인코딩 설정, 파일 리네임 정책)
 	        	// DefaultFileRenamePolicy() : 중복되는 이름 뒤에 1 ~ 9999 붙인다.
-	    	
-	    	if(loginMember.getId().equals(mr.getParameter("writer"))) {
-	    		
+
+// 230216 1교시 코드 약간 수정
+	    	// 사용자가 업데이트 할 때 숨겨서 받아옴 (update.jsp의 48행)
+// 230216 8교시 한 번 조회한 회원은 조회수 처리에 포함되지 않게 만들기 > getBoardByNo()를 ,true 포함시켜 수정. true는 이미 조회한 이력이 있는 상태
+	    	Board board = new BoardService().getBoardByNo(Integer.parseInt(mr.getParameter("no")), true);
+
+	    	if(board != null && loginMember.getId().equals(board.getWriterId())) {	// 게시글이 있는지(null이 아닌지), 게시글 원작성자와 수정할 자와 회원정보가 같은지
 // 230214 8교시 수정한 내용으로 게시글이 바뀌게 만들기
-	    		Board board = new Board();
-	    		
-	    		board.setNo(Integer.parseInt(mr.getParameter("no")));
+	    
+//	    		board.setNo(Integer.parseInt(mr.getParameter("no")));	// 230216 1교시 코드 수정하며 밖으로 빼냄
 	    		board.setTitle(mr.getParameter("title"));
 	    		board.setContent(mr.getParameter("content"));
+	    		
+// 230216 1교시 첨부 파일을 포함해 게시글 수정하기
+	    		String originalFileName = mr.getOriginalFileName("upfile");
+	    		String filesystemName = mr.getFilesystemName("upfile");	    		
+	    		
+	    		// 파일을 넘겨주지 않았을 때 뭐가 찍히나(null of 빈문자열) 확인하기
+	    		System.out.println(originalFileName);
+	    		System.out.println(filesystemName);
+	    		
+	    		// 파일을 첨부하고 수정했을 때 첨부파일이 수정되게
+	    		if(originalFileName != null && filesystemName != null) {	// 사용자가 파일을 수정하지 않으면 null
+	    			
+	    			// 230216 1교시 수정 후 기존에 업로드된 파일 삭제하기
+	    			File file = new File(path + "/" + board.getRenamedFileName()); // 실제 물리적인 경로에 있는 파일 오브젝트(객체) 가져오기
+	    							// 파일 경로로 가서 기존에 있는 파일 찾아옴
+	    			
+	    			if(file.exists()) {		// 찾은 파일이 존재한다면, 삭제하기
+	    				file.delete();
+	    			}
+	    			
+	    			board.setOriginalFileName(originalFileName);
+	    			board.setRenamedFileName(filesystemName);
+	    		}
 	    		
 	    		int result = new BoardService().save(board);
 	    		

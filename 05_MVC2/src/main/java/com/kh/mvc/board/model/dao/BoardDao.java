@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.kh.mvc.board.model.vo.Board;
+import com.kh.mvc.board.model.vo.Reply;
 import com.kh.mvc.common.util.PageInfo;
 
 import static com.kh.mvc.common.jdbc.JDBCTemplate.close;
@@ -48,7 +49,7 @@ public class BoardDao {
 // 230214 2교시 게시글 목록 가져오기 각 게시글을 리스트에 담기	
 	public List<Board> findAll(Connection connection, PageInfo pageInfo) {
 		List<Board> list = new ArrayList<>();
-			// 셀렉해서 데이터가 업으면 null이 아닌 빈 list 리턴, 데이터가 있으면 그 데이터로 리스트 생성해 리턴
+			// 셀렉해서 데이터가 없으면 null이 아닌 빈 list 리턴, 데이터가 있으면 그 데이터로 리스트 생성해 리턴
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
@@ -152,6 +153,9 @@ public class BoardDao {
 				board.setOriginalFileName(rs.getString("ORIGINAL_FILENAME"));
 				board.setRenamedFileName(rs.getString("RENAMED_FILENAME"));
 				board.setContent(rs.getString("CONTENT"));
+// 230216 5교시 댓글 조회
+				// dao에서 게시글 상세 조회를 할 때 그 게시글에 관련된 댓글까지 조회될 수 있게 수정
+				board.setReplies(this.getRepliesByNo(connection, no));
 				board.setCreateDate(rs.getDate("CREATE_DATE"));
 				board.setModifyDate(rs.getDate("MODIFY_DATE"));
 			}
@@ -199,7 +203,7 @@ public class BoardDao {
 		int result = 0;
 		PreparedStatement pstmt = null;
 		
-		String query = "UPDATE BOARD SET TITLE=?,CONTENT=?,MODIFY_DATE=SYSDATE WHERE NO=?";
+		String query = "UPDATE BOARD SET TITLE=?,CONTENT=?,ORIGINAL_FILENAME=?,RENAMED_FILENAME=?,MODIFY_DATE=SYSDATE WHERE NO=?";
 						// 깃 backend/TableScripts.sql의 144행 복붙
 		
 		try {
@@ -207,7 +211,9 @@ public class BoardDao {
 			
 			pstmt.setString(1, board.getTitle());
 			pstmt.setString(2, board.getContent());
-			pstmt.setInt(3, board.getNo());
+			pstmt.setString(3, board.getOriginalFileName());
+			pstmt.setString(4, board.getRenamedFileName());
+			pstmt.setInt(5, board.getNo());
 			
 			result = pstmt.executeUpdate();
 		} catch (SQLException e) {
@@ -219,6 +225,152 @@ public class BoardDao {
 		return result;
 		
 
+	}
+	
+//  230216 3교시 게시글 삭제하기
+	public int updateStatus(Connection connection, int no, String status) {
+		
+		int result = 0;
+		PreparedStatement pstmt = null;
+		
+		// 쿼리문 만들고 쿼리문을 실행시키기 전에 물음표 값을 채워넣어 세팅해 둘 수 잇음. 물음표 = 위치홀더
+		String query = "UPDATE BOARD SET STATUS=? WHERE NO=?";	// 깃 backend/TableScripts.sql의 144행 복붙
+		try {
+			pstmt = connection.prepareStatement(query);
+			
+			pstmt.setString(1, status);	// db의 상태값 Y N 
+			pstmt.setInt(2, no);
+		
+			// 영향받은 행의 개수를 result로 리턴
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(pstmt);	// pstmt 변수 선언 try 구문 안에서 하지 않는 이유 try 구문이 끝나면 변수 소멸됨 close(pstmt)를 못해줌
+		}
+		
+		return result;
+		
+		//웹에서는 삭제되나 DB에서는 행이 삭제되지 않고 STATUS 값을 N으로 바꿔줌
+	}
+	
+	
+// 230216 5교시 댓글 조회
+	// 게시글을 조회할 때 댓글도 함께 조회될 수 있도록 만들기
+			// 여러 댓글이 있을 수 있으니 List
+	public List<Reply> getRepliesByNo(Connection connection, int no) {
+		List<Reply> replies = new ArrayList<>();
+		// 셀렉해서 데이터가 없으면 null이 아닌 빈 list 리턴, 데이터가 있으면 그 데이터로 리스트 생성해 리턴
+		
+		PreparedStatement pstmt = null;
+		
+		ResultSet rs = null;
+		
+		String query = 
+	            "SELECT R.NO, "
+	                + "R.BOARD_NO, "
+	                + "R.CONTENT, "
+	                + "M.ID, "
+	                + "R.CREATE_DATE, "
+	                + "R.MODIFY_DATE "
+	           + "FROM REPLY R "
+	           + "JOIN MEMBER M ON(R.WRITER_NO = M.NO) "
+	           + "WHERE R.STATUS='Y' AND BOARD_NO=? "
+	           + "ORDER BY R.NO DESC";
+		// backend/Tablescripts.sql의 252~256 복붙
+		
+		try {
+			pstmt = connection.prepareStatement(query);
+			
+			pstmt.setInt(1, no);
+			
+			// executeQuery > SELECT 구문 수행할 때 사용. SELECT문 수행하면 resultSet 수행.
+			// executeUpdate > INSERT, UPDATE, DELETE 수행할 때 사용
+			rs = pstmt.executeQuery();
+			
+			//여러 댓글 나올 수 있게 while 문
+			while(rs.next()) {
+				Reply reply = new Reply();
+				
+				reply.setNo(rs.getInt("NO"));
+				reply.setBoardNo(rs.getInt("BOARD_NO"));
+				reply.setContent(rs.getString("CONTENT"));
+				reply.setWriterId(rs.getString("ID"));
+				reply.setCreateDate(rs.getDate("CREATE_DATE"));
+				reply.setModifyDate(rs.getDate("MODIFY_DATE"));
+				
+				replies.add(reply);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(rs);
+			close(pstmt);
+		}
+		
+		return replies;
+	}
+
+// 230216 7교시 댓글 작성해 등록하기
+	public int insertReply(Connection connection, Reply reply) {
+		
+		int result = 0;
+		PreparedStatement pstmt = null;
+		
+		String query = "INSERT INTO REPLY VALUES(SEQ_REPLY_NO.NEXTVAL, ?, ?, ?, DEFAULT, DEFAULT, DEFAULT)";
+						// 149행
+		
+		try {
+			pstmt = connection.prepareStatement(query);
+
+			// 쿼리 수행 전 물음표 값 넣기
+			pstmt.setInt(1, reply.getBoardNo());
+			pstmt.setInt(2, reply.getWriterNo());
+			pstmt.setString(3, reply.getContent());
+			
+			
+			// 쿼리문 수행해서 그 값을 result에 담아줌
+							// executeQuery > SELECT 구문 수행할 때 사용. SELECT문 수행하면 resultSet 수행.
+							// executeUpdate > INSERT, UPDATE, DELETE 수행할 때 사용
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(pstmt);
+		}
+		
+		return result;
+	}
+
+	
+// 230216 7교시 게시글 조회수 증가 로직
+	public int updateReadCount(Connection connection, Board board) {
+		
+		int result = 0;
+		PreparedStatement pstmt = null;
+		
+		String query = "UPDATE BOARD SET READCOUNT=? WHERE NO=?";
+					// 138행
+		
+		try {
+			pstmt = connection.prepareStatement(query);
+			
+			// 쿼리 수행 전 물음표 값 넣기
+			board.setReadCount(board.getReadCount() + 1);		// 기존 readCount에 1 더해서 그 값을 받음
+			
+			pstmt.setInt(1, board.getReadCount());
+			pstmt.setInt(2, board.getNo());
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(pstmt);
+		}
+		
+		return result;
 	}
 
 }
